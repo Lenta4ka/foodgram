@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+from foodgram.constants import PAGE_SIZE
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -8,7 +10,7 @@ SECRET_KEY = 'django-insecure-cg6*%6d51ef8f#4!r3*$vmxm4)abgjw8mo!4y-q*uq1!4$-89$
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 
 INSTALLED_APPS = [
@@ -27,12 +29,12 @@ INSTALLED_APPS = [
     'recept.apps.ReceptConfig',
 ]
 
-CORS_ORIGIN_ALLOW_ALL = True
+#CORS_ORIGIN_ALLOW_ALL = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    'http://127.0.0.1:3000',
-]
+#CORS_ALLOWED_ORIGINS = [
+#    "http://localhost:3000",
+#    'http://127.0.0.1:3000',
+#]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -96,11 +98,13 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
-   'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-   'PAGE_SIZE': 10,
-
-    'EXCEPTION_HANDLER': 'rest_framework.views.exception_handler'
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': PAGE_SIZE,
 }
+
 
 DJOSER = {
     'LOGIN_FIELD': 'email',

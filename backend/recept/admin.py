@@ -1,8 +1,5 @@
 from django.contrib import admin
-
-# Register your models here.
-from django.contrib import admin
-from .models import Ingredient, Tag, Recipe, RecipeIngredient
+from .models import Ingredient, Tag, Recipe, RecipeIngredient, Favorite, ShoppingCart
 
 
 @admin.register(Ingredient)
@@ -32,3 +29,4 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('tags',)
     inlines = (RecipeIngredientInline,)
     ordering = ('-id',)
+
