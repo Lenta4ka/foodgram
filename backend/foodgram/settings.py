@@ -29,12 +29,6 @@ INSTALLED_APPS = [
     'recept.apps.ReceptConfig',
 ]
 
-#CORS_ORIGIN_ALLOW_ALL = True
-
-#CORS_ALLOWED_ORIGINS = [
-#    "http://localhost:3000",
-#    'http://127.0.0.1:3000',
-#]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,12 +65,24 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 AUTH_USER_MODEL = 'users.User'
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB', 'django'),
+            'USER': os.getenv('POSTGRES_USER', 'django'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST', ''),
+            'PORT': os.getenv('DB_PORT', 5432),
+        }
+    }
 
 
 AUTH_PASSWORD_VALIDATORS = [

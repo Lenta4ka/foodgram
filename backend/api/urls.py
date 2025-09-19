@@ -1,28 +1,24 @@
 from django.urls import include, path
-from django.views.generic import TemplateView
-
-from djoser.views import UserViewSet as DjoserUserViewSet
 from django.conf import settings
 from django.conf.urls.static import static
 
 from rest_framework import routers
 
-from users.views import UserViewSet
-from recept.views import RecipeViewSet, TagViewSet, IngredientViewSet
+
+from api.views import RecipeViewSet, TagViewSet, IngredientViewSet, UserViewSet
 
 app_name = 'api'
 
-router = routers.DefaultRouter()
-router.register(r'users', UserViewSet, basename='users')
-router.register(r'recipes', RecipeViewSet, basename='recipes')
-router.register(r'tags', TagViewSet, basename='tags')
-router.register(r'ingredients', IngredientViewSet, basename='ingredients')
+router_v1 = routers.DefaultRouter()
+router_v1.register(r'users', UserViewSet, basename='users')
+router_v1.register(r'recipes', RecipeViewSet, basename='recipes')
+router_v1.register(r'tags', TagViewSet, basename='tags')
+router_v1.register(r'ingredients', IngredientViewSet, basename='ingredients')
 
 urlpatterns = [
+    path('', include(router_v1.urls)),
     path('', include('djoser.urls')),
-    path('auth/', include('djoser.urls.authtoken')),
-
-    path('', include(router.urls)),
+    path(r'auth/', include('djoser.urls.authtoken')),
 ]
 
 if settings.DEBUG:

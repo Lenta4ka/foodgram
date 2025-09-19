@@ -7,6 +7,7 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Tags(models.Model):
+    """Теги рецептов"""
     name = models.CharField(
         unique=True,
         max_length=256,
@@ -20,6 +21,7 @@ class Tags(models.Model):
    )
 
 class Follow(models.Model):
+    """Подписка"""
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="follower",
         verbose_name="Пользователь"

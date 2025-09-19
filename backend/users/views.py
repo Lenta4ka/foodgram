@@ -12,7 +12,8 @@ from .permissions import IsAuthorOrReadOnly
 
 User = get_user_model()
 
-class UserViewSet(viewsets.ModelViewSet):
+'''class UserViewSet(viewsets.ModelViewSet):
+    ""
     queryset = User.objects.all()
     filter_backends = [filters.SearchFilter]
 
