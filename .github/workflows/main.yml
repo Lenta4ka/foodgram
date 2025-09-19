@@ -7,7 +7,6 @@ on:
       - main 
 
 jobs:
-jobs: 
   lint: 
     runs-on: ubuntu-latest 
     steps: 
