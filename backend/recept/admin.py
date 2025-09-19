@@ -29,4 +29,3 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('tags',)
     inlines = (RecipeIngredientInline,)
     ordering = ('-id',)
-

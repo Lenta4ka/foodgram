@@ -17,6 +17,8 @@ class Base64ImageField(serializers.ImageField):
             ext = format.split('/')[-1]
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
         return super().to_internal_value(data)
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -32,7 +34,8 @@ class IngredientSerializer(serializers.ModelSerializer):
 class RecipeIngredientReadSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
-    measurement_unit = serializers.ReadOnlyField(source='ingredient.measurement_unit')
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit')
 
     class Meta:
         model = RecipeIngredient
@@ -69,16 +72,19 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         user = self.context.get('request').user
-        return not user.is_anonymous and obj.favorites.filter(user=user).exists()
+        return not user.is_anonymous and obj.favorites.filter(
+            user=user).exists()
 
     def get_is_in_shopping_cart(self, obj):
         user = self.context.get('request').user
-        return not user.is_anonymous and obj.shopping_cart.filter(user=user).exists()
+        return (not user.is_anonymous and obj.shopping_cart.filter(
+            user=user).exists())
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientWriteSerializer(many=True)
-    tags = serializers.PrimaryKeyRelatedField(many=True, queryset=Tag.objects.all())
+    tags = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=Tag.objects.all())
     image = Base64ImageField()
 
     class Meta:
@@ -94,7 +100,8 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         unique_ingredients = set()
         for item in value:
             if item['id'] in unique_ingredients:
-                raise serializers.ValidationError('Ингредиенты не должны повторяться.')
+                raise serializers.ValidationError(
+                    'Ингредиенты не должны повторяться.')
             unique_ingredients.add(item['id'])
         return value
 

@@ -4,10 +4,10 @@ from rest_framework import serializers
 from django.core.files.base import ContentFile
 
 
-
 from api.models import Follow
 
 User = get_user_model()
+
 
 class Base64ImageField(serializers.ImageField):
     """Класс для сериализации изображений в base64."""
@@ -17,11 +17,14 @@ class Base64ImageField(serializers.ImageField):
             ext = format.split('/')[-1]
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
         return
-    
+
+
 class UserAuthSerializer(serializers.ModelSerializer):
+    """Сериализатор создания нового пользователя"""
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'email', 'first_name', 'last_name']
+        fields = ['id', 'username', 'password',
+                  'email', 'first_name', 'last_name']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
@@ -35,13 +38,16 @@ class UserAuthSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class UserFullSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели пользователя"""
     is_subscribed = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'is_subscribed', 'avatar']
+        fields = ['id', 'username', 'email', 'first_name',
+                  'last_name', 'is_subscribed', 'avatar']
 
     def get_avatar(self, obj):
         request = self.context.get('request')
@@ -55,7 +61,9 @@ class UserFullSerializer(serializers.ModelSerializer):
             return False
         return Follow.objects.filter(user=request.user, following=obj).exists()
 
+
 class AvatarSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели пользователя с полем аватара"""
     avatar = Base64ImageField(allow_null=True)
 
     class Meta:

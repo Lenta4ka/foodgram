@@ -6,6 +6,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class Tags(models.Model):
     """Теги рецептов"""
     name = models.CharField(
@@ -16,9 +17,8 @@ class Tags(models.Model):
         unique=True,
         max_length=256,
         null=True,
-        allow_unicode=False,
+        allow_unicode=False)
 
-   )
 
 class Follow(models.Model):
     """Подписка"""

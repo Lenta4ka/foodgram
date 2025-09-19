@@ -51,7 +51,8 @@ class User(AbstractUser):
     )
 
     password = models.CharField(max_length=256, verbose_name='Пароль')
-    avatar = models.ImageField(blank=True, null=True,verbose_name='Изображение пользователя')
+    avatar = models.ImageField(blank=True, null=True,
+                               verbose_name='Изображение пользователя')
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -60,6 +61,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
 
 class Subscription(models.Model):
     """Подписка на автора."""

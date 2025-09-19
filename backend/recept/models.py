@@ -17,13 +17,15 @@ class Ingredient(models.Model):
     name = models.CharField('Название', max_length=TEXT_LENGTH_MEDIUM)
     measurement_unit = models.CharField(
         'Единица измерения', max_length=TEXT_LENGTH_MIN)
+
     def __str__(self):
         return f'{self.name} ({self.measurement_unit})'
 
 
 class Tag(models.Model):
     """Модель тегов."""
-    name = models.CharField(max_length=TEXT_LENGTH_MAX, unique=True, verbose_name='Название тега')
+    name = models.CharField(
+        max_length=TEXT_LENGTH_MAX, unique=True, verbose_name='Название тега')
     slug = models.SlugField(unique=True, verbose_name='SLUG')
 
     def __str__(self):
@@ -32,17 +34,23 @@ class Tag(models.Model):
 
 class Recipe(models.Model):
     """Модель рецепта"""
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes', verbose_name='Автор')
-    name = models.CharField(max_length=TEXT_LENGTH_MAX, verbose_name='Название')
-    image = models.ImageField(upload_to='recipes', verbose_name='Изображение')
-    text = models.TextField(verbose_name='Описание рецепта')
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE,
+        related_name='recipes', verbose_name='Автор')
+    name = models.CharField(
+        max_length=TEXT_LENGTH_MAX, verbose_name='Название')
+    image = models.ImageField(
+        upload_to='recipes', verbose_name='Изображение')
+    text = models.TextField(
+        verbose_name='Описание рецепта')
     ingredients = models.ManyToManyField(
         Ingredient,
         through='RecipeIngredient',
         related_name='recipes',
         verbose_name='Ингредиенты'
     )
-    tags = models.ManyToManyField(Tag, related_name='recipes', verbose_name='Теги')
+    tags = models.ManyToManyField(
+        Tag, related_name='recipes', verbose_name='Теги')
     short_link = models.CharField(
         'Короткая ссылка',
         max_length=TEXT_LENGTH_MIN,
@@ -83,10 +91,13 @@ class RecipeIngredient(models.Model):
         )
     )
 
+
 class Favorite(models.Model):
     """Модель избранных рецептов"""
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites', verbose_name='<UNK>')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='favorites')
+    user = models.ForeignKey(User, on_delete=models.CASCADE,
+                             related_name='favorites', verbose_name='<UNK>')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+                               related_name='favorites')
 
     class Meta:
         unique_together = ('user', 'recipe')
