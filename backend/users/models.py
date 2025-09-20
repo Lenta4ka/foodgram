@@ -1,58 +1,57 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MaxLengthValidator, RegexValidator
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.validators import RegexValidator
 from django.db import models
 
-from .validators import validate_username
+from foodgram.constants import TEXT_LENGTH_MAX, TEXT_LENGTH_MEDIUM
+from users.manager import UserManager
 
 
 class User(AbstractUser):
-    '''Модель пользователя.'''
-    email = models.EmailField(
-        unique=True,
-        max_length=256,
-        validators=[MaxLengthValidator(256)],
-        verbose_name='Электронная почта пользователя',
-        help_text='Введите свой электронный адрес'
-    )
-
-    username = models.CharField(
-        max_length=256,
-        unique=True,
-        help_text=(
-            'Обязательное поле. 150 символов или меньше. '
-            'Только буквы, цифры и @/./+/-/_ символы.'
-        ),
-        validators=[
-            validate_username,
-            RegexValidator(
-                regex=r'^[\w.@+-]+$',
-                message=(
-                    'Username пользователя может содержать только '
-                    'буквы, цифры и @/./+/-/_ символы.'
-                ),
-            ),
-        ],
-        error_messages={
-            'unique': 'Пользователь с таким именем уже существует.',
-        },
-        verbose_name='Имя пользователя',
-    )
+    """Кастомный пользователь системы."""
 
     first_name = models.CharField(
-        max_length=256,
-        validators=[MaxLengthValidator(256)],
-        verbose_name='Имя'
+        'Имя',
+        max_length=TEXT_LENGTH_MEDIUM,
+        validators=[
+            RegexValidator(
+                regex=r'^[А-Яа-яЁёA-Za-z]+$',
+                message='Поле должно содержать только буквы',
+                code='invalid_name',
+            ),
+        ],
     )
-
     last_name = models.CharField(
-        max_length=256,
-        validators=[MaxLengthValidator(256)],
-        verbose_name='Фамилия'
+        'Фамилия',
+        max_length=TEXT_LENGTH_MEDIUM,
+        validators=[
+            RegexValidator(
+                regex=r'^[А-Яа-яЁёA-Za-z]+$',
+                message='Поле должно содержать только буквы',
+                code='invalid_name',
+            ),
+        ],
     )
+    username = models.CharField(
+        'Никнейм',
+        max_length=TEXT_LENGTH_MEDIUM,
+        unique=True,
+        error_messages={
+            'unique': 'Никнейм занят.',
+        },
+        validators=[UnicodeUsernameValidator()]
+    )
+    email = models.EmailField(
+        'Электронная почта',
+        max_length=TEXT_LENGTH_MAX,
+        unique=True
+    )
+    avatar = models.ImageField('Аватар', upload_to='users/')
 
-    password = models.CharField(max_length=256, verbose_name='Пароль')
-    avatar = models.ImageField(blank=True, null=True,
-                               verbose_name='Изображение пользователя')
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'username', 'password']
+    USERNAME_FIELD = 'email'
+
+    objects = UserManager()
 
     class Meta:
         verbose_name = 'Пользователь'
