@@ -2,11 +2,12 @@ from django.contrib.auth import get_user_model
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
-
-from .models import Recipe, Tag, Ingredient
+from .models import Ingredient, Recipe, Tag
 from .serializers import (
-    RecipeReadSerializer, RecipeWriteSerializer,
-    TagSerializer, IngredientSerializer
+    IngredientSerializer,
+    RecipeReadSerializer,
+    RecipeWriteSerializer,
+    TagSerializer,
 )
 
 User = get_user_model()

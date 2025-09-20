@@ -2,9 +2,6 @@ import base64
 import uuid
 
 from django.core.files.base import ContentFile
-from rest_framework import serializers
-
-from foodgram.constants import IMAGE
 from recept.models import (
     Favorite,
     Ingredient,
@@ -13,7 +10,10 @@ from recept.models import (
     ShoppingCart,
     Tag,
 )
+from rest_framework import serializers
 from users.models import Subscription, User
+
+from foodgram.constants import IMAGE
 
 
 class Base64ImageField(serializers.ImageField):

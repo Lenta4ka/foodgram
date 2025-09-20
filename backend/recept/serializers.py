@@ -1,10 +1,11 @@
-from django.contrib.auth import get_user_model
-from rest_framework import serializers
 import base64
 
+from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
-from .models import Recipe, Tag, Ingredient, RecipeIngredient
+from rest_framework import serializers
 from users.serializers import UserFullSerializer
+
+from .models import Ingredient, Recipe, RecipeIngredient, Tag
 
 User = get_user_model()
 
