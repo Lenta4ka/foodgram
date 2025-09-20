@@ -3,7 +3,7 @@ import base64
 from django.contrib.auth import get_user_model
 from django.core.files.base import ContentFile
 from rest_framework import serializers
-from users.serializers import UserFullSerializer
+
 
 from .models import Ingredient, Recipe, RecipeIngredient, Tag
 
@@ -49,37 +49,6 @@ class RecipeIngredientWriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = RecipeIngredient
         fields = ('id', 'amount')
-
-
-class RecipeReadSerializer(serializers.ModelSerializer):
-    author = UserFullSerializer(read_only=True)
-    tags = TagSerializer(many=True, read_only=True)
-    ingredients = serializers.SerializerMethodField()
-    is_favorited = serializers.SerializerMethodField()
-    is_in_shopping_cart = serializers.SerializerMethodField()
-    image = Base64ImageField(allow_null=True)
-
-    class Meta:
-        model = Recipe
-        fields = [
-            'id', 'author', 'ingredients', 'tags',
-            'image', 'name', 'text', 'cooking_time',
-            'is_favorited', 'is_in_shopping_cart'
-        ]
-
-    def get_ingredients(self, obj):
-        links = obj.ingredient_links.select_related('ingredient')
-        return RecipeIngredientReadSerializer(links, many=True).data
-
-    def get_is_favorited(self, obj):
-        user = self.context.get('request').user
-        return not user.is_anonymous and obj.favorites.filter(
-            user=user).exists()
-
-    def get_is_in_shopping_cart(self, obj):
-        user = self.context.get('request').user
-        return (not user.is_anonymous and obj.shopping_cart.filter(
-            user=user).exists())
 
 
 class RecipeWriteSerializer(serializers.ModelSerializer):
@@ -136,5 +105,4 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         self.create_ingredients(instance, ingredients)
         return instance
 
-    def to_representation(self, instance):
-        return RecipeReadSerializer(instance, context=self.context).data
+
