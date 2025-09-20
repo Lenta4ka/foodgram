@@ -16,6 +16,8 @@ services:
     volumes:
       - static:/backend_static
       - media:/app/media
+    entrypoint: ["/entrypoint.prod.sh"]
+    command: ["gunicorn", "--bind", "0.0.0.0:7070", "foodgram.wsgi"] 
   frontend:
     image: lenta4ka/foodgram_frontend
     env_file: .env
