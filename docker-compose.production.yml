@@ -25,6 +25,7 @@ services:
   gateway:
     image: lenta4ka/foodgram_gateway
     env_file: .env
+    build: ./nginx/
     depends_on:
       - backend
       - frontend
