@@ -104,4 +104,3 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         instance.ingredient_links.all().delete()
         self.create_ingredients(instance, ingredients)
         return instance
-
