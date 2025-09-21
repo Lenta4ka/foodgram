@@ -105,4 +105,3 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         self.create_ingredients(instance, ingredients)
         return instance
 
-
