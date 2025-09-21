@@ -5,4 +5,4 @@ RUN pip install -r requirements.txt --no-cache-dir
 COPY . .
 RUN chmod +x ./docker-entrypoint.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
-CMD ["gunicorn", "--bind", "0.0.0.0:7070", "foodgram.wsgi"]
+CMD gunicorn foodgram.wsgi:application --bind 0.0.0.0:8000
