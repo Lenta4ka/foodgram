@@ -18,6 +18,7 @@ class Ingredient(models.Model):
     name = models.CharField('Название', max_length=TEXT_LENGTH_MEDIUM)
     measurement_unit = models.CharField(
         'Единица измерения', max_length=TEXT_LENGTH_MIN)
+
     class Meta:
         default_related_name = 'ingredients'
         verbose_name = 'Ингредиент'
@@ -29,6 +30,7 @@ class Ingredient(models.Model):
                 name='unique_ingredient'
             )
         ]
+
     def __str__(self):
         return f'{self.name} ({self.measurement_unit})'
 
@@ -101,6 +103,7 @@ class RecipeIngredient(models.Model):
             ),
         )
     )
+
     class Meta:
         verbose_name = 'Продукт'
         verbose_name_plural = 'Продукты'
@@ -112,6 +115,7 @@ class RecipeIngredient(models.Model):
             ),
         )
 
+
 class Favorite(models.Model):
     """Модель избранных рецептов"""
     user = models.ForeignKey(User, on_delete=models.CASCADE,
@@ -121,10 +125,9 @@ class Favorite(models.Model):
 
     class Meta:
         unique_together = ('user', 'recipe')
+
     def __str__(self):
         return f'{self.user.username} добавил в избранное {self.recipe.name}'
-
-
 
 
 class ShoppingCart(models.Model):
