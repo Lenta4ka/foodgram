@@ -36,10 +36,6 @@ class User(AbstractUser):
         'Никнейм',
         max_length=TEXT_LENGTH_MEDIUM,
         unique=True,
-        error_messages={
-            'unique': 'Никнейм занят.',
-        },
-        validators=[UnicodeUsernameValidator()]
     )
     email = models.EmailField(
         'Электронная почта',
