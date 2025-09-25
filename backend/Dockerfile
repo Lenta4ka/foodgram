@@ -5,8 +5,8 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt --no-cache-dir
 COPY . .
 
-COPY /docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x ./docker-entrypoint.sh
-ENTRYPOINT ["./docker-entrypoint.sh"]
+COPY /entrypoint.prod.sh /entrypoint.prod.sh
+RUN chmod +x /entrypoint.prod.sh
+ENTRYPOINT ["/entrypoint.prod.sh"]
 
-CMD ["gunicorn", "--bind", "0.0.0.0:7070", "foodgram.wsgi"]
+CMD ["gunicorn", "--bind", "0.0.0.0:7070", "foodgram_backend.wsgi"]

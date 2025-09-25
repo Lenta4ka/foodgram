@@ -2,7 +2,10 @@ import base64
 import uuid
 
 from django.core.files.base import ContentFile
-from recept.models import (
+from rest_framework import serializers
+
+from foodgram_backend.constants import IMAGE
+from recipes.models import (
     Favorite,
     Ingredient,
     Recipe,
@@ -10,10 +13,7 @@ from recept.models import (
     ShoppingCart,
     Tag,
 )
-from rest_framework import serializers
 from users.models import Subscription, User
-
-from foodgram.constants import IMAGE
 
 
 class Base64ImageField(serializers.ImageField):
@@ -278,11 +278,10 @@ class RecipeGetSerializer(serializers.ModelSerializer):
 
     def check_user_status(self, obj, model_class):
         """Проверяет статус пользователя."""
-        chek_user = self.context.get('request')
+        user = self.context.get('request')
         return (
-            chek_user and chek_user.user.is_authenticated
-            and model_class.objects.filter(
-                recipe=obj, user=chek_user.user).exists()
+            user and user.user.is_authenticated
+            and model_class.objects.filter(recipe=obj, user=user.user).exists()
         )
 
     def get_is_favorited(self, obj):
