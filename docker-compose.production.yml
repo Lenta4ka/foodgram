@@ -34,3 +34,4 @@ services:
       - media:/media
     ports:
       - 7070:80
+  
