@@ -1,18 +1,21 @@
+#test
 volumes:
-  media:
   pg_data:
   static:
+  media:
+
 services:
-  db:
+  food_db:
     image: postgres:13.10
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
+
   backend:
     image: lenta4ka/foodgram_backend
     env_file: .env
     depends_on:
-      - db
+      - food_db
     volumes:
       - static:/backend_static
       - media:/app/media
@@ -23,15 +26,14 @@ services:
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - static:/frontend_static
+
   gateway:
     image: lenta4ka/foodgram_gateway
-    env_file: .env
-    depends_on:
-      - backend
-      - frontend
     volumes:
-      - static:/staticfiles
-      - media:/media
+       - static:/staticfiles
+       - media:/app/media
     ports:
       - 7070:80
-  
+    depends_on:
+      - backend
+    restart: always
