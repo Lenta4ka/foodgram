@@ -1,5 +1,21 @@
 from io import BytesIO
 
+from django.db.models import Count, Exists, OuterRef, Sum
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet as DjoserViewSet
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import (
+    SAFE_METHODS,
+    AllowAny,
+    IsAuthenticated,
+    IsAuthenticatedOrReadOnly,
+)
+from rest_framework.response import Response
+from rest_framework.reverse import reverse
+
 from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomPagination
 from api.permissions import IsAuthorOrReadOnly
@@ -16,11 +32,7 @@ from api.serializers import (
     UserGetSerializer,
     UserPostSerializer,
 )
-from django.db.models import Count, Exists, OuterRef, Sum
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
-from django_filters.rest_framework import DjangoFilterBackend
-from djoser.views import UserViewSet as DjoserViewSet
+from foodgram.constants import ZERO
 from recept.models import (
     Favorite,
     Ingredient,
@@ -29,19 +41,7 @@ from recept.models import (
     ShoppingCart,
     Tag,
 )
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import (
-    SAFE_METHODS,
-    AllowAny,
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-)
-from rest_framework.response import Response
-from rest_framework.reverse import reverse
 from users.models import Subscription, User
-
-from foodgram.constants import ZERO
 
 
 class UserViewSet(DjoserViewSet):
