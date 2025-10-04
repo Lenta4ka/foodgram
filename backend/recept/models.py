@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from foodgram_backend.constants import (
+from foodgram.constants import (
     AMOUNT_INGREDIENTS_MIN,
     COOKING_TIME_MIN,
     TEXT_LENGTH_MAX,

@@ -1,9 +1,8 @@
 from django.contrib.auth.models import AbstractUser
-from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.core.validators import RegexValidator
 from django.db import models
 
-from foodgram_backend.constants import TEXT_LENGTH_MAX, TEXT_LENGTH_MEDIUM
+from foodgram.constants import TEXT_LENGTH_MAX, TEXT_LENGTH_MEDIUM
 from users.manager import UserManager
 
 
@@ -36,10 +35,6 @@ class User(AbstractUser):
         'Никнейм',
         max_length=TEXT_LENGTH_MEDIUM,
         unique=True,
-        error_messages={
-            'unique': 'Никнейм занят.',
-        },
-        validators=[UnicodeUsernameValidator()]
     )
     email = models.EmailField(
         'Электронная почта',
