@@ -1,41 +1,37 @@
-#test
 volumes:
-  pg_data:
-  static:
-  media:
-
+  media: null
+  pg_data: null
+  static: null
 services:
-  food_db:
+  db:
     image: postgres:13.10
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
-
   backend:
     image: lenta4ka/foodgram_backend
     env_file: .env
     depends_on:
-      - food_db
+      - db
     volumes:
       - static:/backend_static
       - media:/app/media
-    entrypoint: ["/docker-entrypoint.sh"]
-    command: ["gunicorn", "--bind", "0.0.0.0:7070", "foodgram.wsgi"]  
-
+    entrypoint: ["/entrypoint.prod.sh"]
+    command: ["gunicorn", "--bind", "0.0.0.0:7070", "foodgram_backend.wsgi"] 
   frontend:
     image: lenta4ka/foodgram_frontend
     env_file: .env
     command: cp -r /app/build/. /frontend_static/
     volumes:
       - static:/frontend_static
-
   gateway:
     image: lenta4ka/foodgram_gateway
-    volumes:
-       - static:/staticfiles
-       - media:/app/media
-    ports:
-      - 7070:80
+    env_file: .env
     depends_on:
       - backend
-    restart: always
+      - frontend
+    volumes:
+      - static:/staticfiles
+      - media:/media
+    ports:
+      - 7070:80
