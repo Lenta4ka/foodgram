@@ -1,61 +1,57 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MaxLengthValidator, RegexValidator
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.core.validators import RegexValidator
 from django.db import models
 
-from .constants import MAX_LENGTH_EMAIL, MAX_LENGTH_NAME
-from .validators import validate_username
+from foodgram_backend.constants import TEXT_LENGTH_MAX, TEXT_LENGTH_MEDIUM
+from users.manager import UserManager
 
 
 class User(AbstractUser):
-    """Модель пользователя."""
-
-    email = models.EmailField(
-        unique=True,
-        max_length=MAX_LENGTH_EMAIL,
-        validators=[MaxLengthValidator(MAX_LENGTH_EMAIL)],
-        verbose_name='Электронная почта',
-    )
-
-    username = models.CharField(
-        max_length=MAX_LENGTH_NAME,
-        unique=True,
-        help_text=(
-            'Обязательное поле. 150 символов или меньше. '
-            'Только буквы, цифры и @/./+/-/_ символы.'
-        ),
-        validators=[
-            validate_username,
-            RegexValidator(
-                regex=r'^[\w.@+-]+$',
-                message=(
-                    'Имя пользователя может содержать только '
-                    'буквы, цифры и символы @/./+/-/_'
-                ),
-            ),
-        ],
-        error_messages={
-            'unique': 'Пользователь с таким именем уже существует.',
-        },
-        verbose_name='Имя пользователя',
-    )
+    """Кастомный пользователь системы."""
 
     first_name = models.CharField(
-        max_length=MAX_LENGTH_NAME,
-        validators=[MaxLengthValidator(MAX_LENGTH_NAME)],
-        verbose_name='Имя',
+        'Имя',
+        max_length=TEXT_LENGTH_MEDIUM,
+        validators=[
+            RegexValidator(
+                regex=r'^[А-Яа-яЁёA-Za-z]+$',
+                message='Поле должно содержать только буквы',
+                code='invalid_name',
+            ),
+        ],
     )
-
     last_name = models.CharField(
-        max_length=MAX_LENGTH_NAME,
-        validators=[MaxLengthValidator(MAX_LENGTH_NAME)],
-        verbose_name='Фамилия',
+        'Фамилия',
+        max_length=TEXT_LENGTH_MEDIUM,
+        validators=[
+            RegexValidator(
+                regex=r'^[А-Яа-яЁёA-Za-z]+$',
+                message='Поле должно содержать только буквы',
+                code='invalid_name',
+            ),
+        ],
     )
+    username = models.CharField(
+        'Никнейм',
+        max_length=TEXT_LENGTH_MEDIUM,
+        unique=True,
+        error_messages={
+            'unique': 'Никнейм занят.',
+        },
+        validators=[UnicodeUsernameValidator()]
+    )
+    email = models.EmailField(
+        'Электронная почта',
+        max_length=TEXT_LENGTH_MAX,
+        unique=True
+    )
+    avatar = models.ImageField('Аватар', upload_to='users/')
 
-    avatar = models.ImageField(
-        upload_to='avatars',
-        blank=True,
-        verbose_name='Аватар',
-    )
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'username', 'password']
+    USERNAME_FIELD = 'email'
+
+    objects = UserManager()
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -66,34 +62,36 @@ class User(AbstractUser):
         return self.username
 
 
-class Follow(models.Model):
-    """Модель подписок."""""
+class Subscription(models.Model):
+    """Подписка на автора."""
 
-    user = models.ForeignKey(
+    subscriber = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscriptions',
         verbose_name='Подписчик',
+        related_name='subscribers',
     )
-    following = models.ForeignKey(
+    author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscribers',
         verbose_name='Автор',
+        related_name='authors',
     )
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'following'], name='unique_follow'
-            ),
-            models.CheckConstraint(
-                check=~models.Q(user=models.F('following')),
-                name='user_cannot_follow_himself',
-            ),
-        ]
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
+        ordering = ('subscriber',)
+        constraints = [
+            models.UniqueConstraint(
+                fields=['subscriber', 'author'],
+                name='unique_subscriber_author'
+            ),
+            models.CheckConstraint(
+                name='check_subscriber_author',
+                check=~models.Q(subscriber=models.F('author')),
+            )
+        ]
 
     def __str__(self):
-        return f'{self.user} подписан на {self.following}'
+        return f'{self.subscriber} подписан на {self.author}'

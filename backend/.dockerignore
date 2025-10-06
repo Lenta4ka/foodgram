@@ -1,12 +1,6 @@
-**/__pycache__/
-*.sqlite3
-.env
-.venv
+venv
 .git
-.idea
-*.log
-*.pyc
-*.pyo
-*.pyd
-.DS_Store
+.vscode
+.env
 db.sqlite3
+db.sqlite3-journal
