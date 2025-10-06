@@ -32,8 +32,8 @@ from api.serializers import (
     UserGetSerializer,
     UserPostSerializer,
 )
-from foodgram_backend.constants import ZERO
-from recipes.models import (
+from foodgram.constants import ZERO
+from recept.models import (
     Favorite,
     Ingredient,
     Recipe,
