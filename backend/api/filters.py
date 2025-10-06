@@ -1,56 +1,38 @@
-from django_filters.rest_framework import FilterSet, filters
-from recept.models import Ingredient, Recipe, Tag
+from django_filters import rest_framework as filters
+
+from recept.models import Ingredient, Recipe
 
 
-class RecipeFilter(FilterSet):
-    """Фильтрация рецептов."""
-
+class RecipeFilter(filters.FilterSet):
+    author = filters.NumberFilter(field_name='author__id')
+    tags = filters.AllValuesMultipleFilter(field_name='tags__slug')
     is_favorited = filters.BooleanFilter(method='filter_is_favorited')
     is_in_shopping_cart = filters.BooleanFilter(
-        method='filter_is_in_shopping_cart'
-    )
-    tags = filters.ModelMultipleChoiceFilter(
-        queryset=Tag.objects.all(),
-        field_name='tags__slug',
-        to_field_name='slug'
-    )
+        method='filter_in_shopping_cart')
 
     class Meta:
         model = Recipe
-        fields = ('author', 'tags', 'is_favorited', 'is_in_shopping_cart')
-
-    def get_authenticated_user(self):
-        """Возвращает аутентифицированного пользователя, если он есть."""
-        return (
-            self.request.user if self.request.user.is_authenticated else None
-        )
+        fields = ['author', 'tags', 'is_favorited', 'is_in_shopping_cart']
 
     def filter_is_favorited(self, queryset, name, value):
-        """Фильтрует рецепты по наличию в избранном."""
-        user = self.get_authenticated_user()
-        if value and user:
-            return queryset.filter(favorites__user_id=user.id)
+        """Фильтр для избранного."""
+
+        user = self.request.user
+        if value and user.is_authenticated:
+            return queryset.filter(favorited_by__user=user)
         return queryset
 
-    def filter_is_in_shopping_cart(self, queryset, name, value):
-        """Фильтрует рецепты по наличию в корзине покупок."""
-        user = self.get_authenticated_user()
-        if value and user:
-            return queryset.filter(shopping_carts__user_id=user.id)
-        return queryset
+    def filter_in_shopping_cart(self, queryset, name, value):
+        """Фильтр для списка покупок."""
 
-    def filter_tags(self, queryset, name, value):
-        """Фильтрует рецепты по тегам."""
-        tag_slugs = self.request.query_params.getlist('tags')
-        if tag_slugs:
-            return queryset.filter(tags__slug__in=tag_slugs).distinct()
+        user = self.request.user
+        if value and user.is_authenticated:
+            return queryset.filter(shopping_cart__user=user)
         return queryset
 
 
-class IngredientFilter(FilterSet):
-    """Фильтры для ингредиентов."""
-
-    name = filters.CharFilter(lookup_expr='istartswith')
+class IngredientFilter(filters.FilterSet):
+    name = filters.CharFilter(field_name='name', lookup_expr='istartswith')
 
     class Meta:
         model = Ingredient

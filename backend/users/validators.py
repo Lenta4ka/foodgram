@@ -9,8 +9,7 @@ def validate_username(value):
         )
 
     invalid_chars = [
-        char for char in value
-        if not char.isalnum() and char not in '@.+-_'
+        char for char in value if not char.isalnum() and char not in '@.+-_'
     ]
     if invalid_chars:
         invalid_chars_str = ', '.join(invalid_chars)
