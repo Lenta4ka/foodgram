@@ -43,10 +43,10 @@ class RecipeAdmin(admin.ModelAdmin):
         'tags'
     )
     inlines = (RecipeIngredientInline,)
-    
-    def favorites(self, obj):
-        if Favorite.objects.filter(recipe=obj).exists():
-            return Favorite.objects.filter(recipe=obj).count()
+
+    def favorites(self, request):
+        if Favorite.objects.filter(recipe=request).exists():
+            return Favorite.objects.filter(recipe=request).count()
         return 0
 
     def get_queryset(self, request):
